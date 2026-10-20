@@ -3,15 +3,6 @@ import { Link, Route, Routes } from "react-router";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 function App() {
   return (
