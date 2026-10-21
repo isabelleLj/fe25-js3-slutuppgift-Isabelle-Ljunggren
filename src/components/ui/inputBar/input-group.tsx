@@ -4,7 +4,7 @@ import { cn } from "cn";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "./input";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/ui/inputBar/textarea";
 
 function InputGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (

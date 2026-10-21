@@ -9,7 +9,7 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/components/ui/input-group";
+} from "@/components/ui/inputBar/input-group";
 
 async function fetchCountries(): Promise<Country[]> {
   const response = await fetch(
