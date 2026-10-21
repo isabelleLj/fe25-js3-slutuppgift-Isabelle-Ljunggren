@@ -39,9 +39,9 @@ function Countries() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <section className="w-full min-w-0">
       <DataTable data={countries} columns={columns} />
-    </div>
+    </section>
   );
 }
 
