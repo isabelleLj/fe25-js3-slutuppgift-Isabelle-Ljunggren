@@ -10,7 +10,7 @@ export function Navbar() {
           <Globe className="h-6 w-6 text-sky-400" />
 
           <span className="text-lg font-bold tracking-tight text-white">
-            World<span className="text-sky-400">Explorer</span>
+            Trevlig<span className="text-sky-400">Resa</span>
           </span>
         </Link>
 
