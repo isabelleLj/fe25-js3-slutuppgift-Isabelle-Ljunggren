@@ -1,5 +1,6 @@
-"use client";
 import * as React from "react";
+import { useSearchParams } from "react-router";
+
 import {
   useTable,
   type ColumnDef,
@@ -22,12 +23,35 @@ import { features, type DataTableFeatures } from "./data-table-features";
 interface DataTableProps<TData extends RowData> {
   columns: ColumnDef<DataTableFeatures, TData>[];
   data: TData[];
+  resetKey?: string;
 }
 export function DataTable<TData extends RowData>({
   columns,
   data,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const pageParam = Number(searchParams.get("page") ?? "1");
+  const pageIndex =
+    Number.isInteger(pageParam) && pageParam > 0 ? pageParam - 1 : 0;
+
+  const goToPage = (nextPageIndex: number) => {
+    const params = new URLSearchParams(searchParams);
+
+    if (nextPageIndex === 0) {
+      params.delete("page");
+    } else {
+      params.set("page", String(nextPageIndex + 1));
+    }
+
+    setSearchParams(params);
+  };
+
+  console.log({
+    urlPage: searchParams.get("page"),
+    pageIndex,
+  });
 
   const table = useTable({
     features,
@@ -36,6 +60,10 @@ export function DataTable<TData extends RowData>({
     onSortingChange: setSorting,
     state: {
       sorting,
+      pagination: {
+        pageIndex,
+        pageSize: 10,
+      },
     },
   });
 
@@ -101,7 +129,7 @@ export function DataTable<TData extends RowData>({
             variant="default"
             size="sm"
             className="min-w-0 flex-1 sm:flex-none"
-            onClick={() => table.previousPage()}
+            onClick={() => goToPage(pageIndex - 1)}
             disabled={!table.getCanPreviousPage()}
           >
             Föregående
@@ -111,7 +139,7 @@ export function DataTable<TData extends RowData>({
             variant="default"
             size="sm"
             className="min-w-0 flex-1 sm:flex-none"
-            onClick={() => table.nextPage()}
+            onClick={() => goToPage(pageIndex + 1)}
             disabled={!table.getCanNextPage()}
           >
             Nästa

@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { columns } from "@/components/ui/datatable/columns";
-import { useState } from "react";
 import { Search } from "lucide-react";
+import { useSearchParams } from "react-router";
 
 import {
   InputGroup,
@@ -34,8 +34,9 @@ const regions = [
 ] as const;
 
 function Countries() {
-  const [search, setSearch] = useState("");
-  const [selectedRegion, setSelectedRegion] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("query") ?? "";
+  const selectedRegion = searchParams.get("region") ?? "All";
 
   const {
     data: countries,
@@ -73,13 +74,6 @@ function Countries() {
   return (
     <section className="w-full min-w-0 space-y-4">
       <div className="w-full max-w-sm">
-        <label
-          htmlFor="country-search"
-          className="text-sm font-medium text-white"
-        >
-          Sök efter land
-        </label>
-
         <InputGroup>
           <InputGroupAddon>
             <Search aria-hidden="true" />
@@ -90,7 +84,18 @@ function Countries() {
             type="search"
             placeholder="Sök efter ett land..."
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => {
+              const params = new URLSearchParams(searchParams);
+              const value = event.target.value;
+
+              if (value) {
+                params.set("query", value);
+              } else {
+                params.delete("query");
+              }
+              params.delete("page");
+              setSearchParams(params);
+            }}
             aria-label="Sök efter land"
             className="text-white placeholder:text-white"
           />
@@ -106,7 +111,17 @@ function Countries() {
               key={region}
               type="button"
               aria-pressed={isSelected}
-              onClick={() => setSelectedRegion(region)}
+              onClick={() => {
+                const params = new URLSearchParams(searchParams);
+
+                if (region === "All") {
+                  params.delete("region");
+                } else {
+                  params.set("region", region);
+                }
+                params.delete("page");
+                setSearchParams(params);
+              }}
               className={
                 isSelected
                   ? "border-sky-400 bg-sky-500 text-white hover:bg-sky-600"
