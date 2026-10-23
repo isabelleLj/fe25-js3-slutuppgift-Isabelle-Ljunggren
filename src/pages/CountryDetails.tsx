@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
-import { fetchCapitalCoordinates, fetchWeather } from "@/services/weather";
 import { getWeatherDescription } from "@/utils/weatherDescription";
 import { fetchWikipediaSummary } from "@/services/wikipedia";
+import useWeather from "@/hooks/useWeather";
+import useWikipedia from "@/hooks/useWikipedia";
 
 async function fetchCountries(): Promise<Country[]> {
   const response = await fetch(
@@ -31,69 +32,19 @@ function CountryDetails() {
   });
 
   const country = countries?.find((country) => country.alpha3Code === code);
-
   const {
     data: weather,
     isPending: isWeatherPending,
     isError: isWeatherError,
     refetch: refetchWeather,
-  } = useQuery({
-    queryKey: ["weather", country?.alpha3Code],
-    enabled: Boolean(country),
-    queryFn: async () => {
-      if (!country) {
-        throw new Error("Landet hittades inte");
-      }
-
-      let coordinates: {
-        latitude: number;
-        longitude: number;
-      } | null = null;
-
-      if (country.capital) {
-        const capitalLocation = await fetchCapitalCoordinates(
-          country.capital,
-          country.name,
-        );
-
-        if (capitalLocation) {
-          coordinates = {
-            latitude: capitalLocation.latitude,
-            longitude: capitalLocation.longitude,
-          };
-        }
-      }
-
-      if (!coordinates && country.latlng?.length === 2) {
-        const [latitude, longitude] = country.latlng;
-
-        coordinates = { latitude, longitude };
-      }
-
-      if (!coordinates) {
-        throw new Error("Koordinater saknas");
-      }
-
-      return fetchWeather(coordinates.latitude, coordinates.longitude);
-    },
-  });
+  } = useWeather(country);
 
   const {
     data: wikipedia,
     isPending: isWikipediaPending,
     isError: isWikipediaError,
     refetch: refetchWikipedia,
-  } = useQuery({
-    queryKey: ["wikipedia", country?.alpha3Code],
-    enabled: Boolean(country),
-    queryFn: async () => {
-      if (!country) {
-        throw new Error("Landet hittades inte");
-      }
-
-      return fetchWikipediaSummary(country.name);
-    },
-  });
+  } = useWikipedia(country);
 
   const backUrl = location.state?.from ?? "/";
 

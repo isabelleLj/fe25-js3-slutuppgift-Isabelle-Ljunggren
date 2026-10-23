@@ -20,6 +20,10 @@ async function fetchCapitalCoordinates(
 
   const data: GeocodingResult = await response.json();
 
+  if(!("results" in data)) {
+    throw new Error("No result");
+  }
+
   const locations = data.results ?? [];
 
   const matchingCapital = locations.find(

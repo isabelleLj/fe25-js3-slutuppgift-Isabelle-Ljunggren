@@ -111,7 +111,7 @@ export function DataTable<TData extends RowData>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  Inga resultat.
+                  Inga länder matchar dina kriterier.
                 </TableCell>
               </TableRow>
             )}
