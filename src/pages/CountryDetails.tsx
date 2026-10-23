@@ -1,6 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
+import { fetchCapitalCoordinates, fetchWeather } from "@/services/weather";
+import { getWeatherDescription } from "@/utils/weatherDescription";
+import { fetchWikipediaSummary } from "@/services/wikipedia";
 
 async function fetchCountries(): Promise<Country[]> {
   const response = await fetch(
@@ -28,6 +31,69 @@ function CountryDetails() {
   });
 
   const country = countries?.find((country) => country.alpha3Code === code);
+
+  const {
+    data: weather,
+    isPending: isWeatherPending,
+    isError: isWeatherError,
+    refetch: refetchWeather,
+  } = useQuery({
+    queryKey: ["weather", country?.alpha3Code],
+    enabled: Boolean(country),
+    queryFn: async () => {
+      if (!country) {
+        throw new Error("Landet hittades inte");
+      }
+
+      let coordinates: {
+        latitude: number;
+        longitude: number;
+      } | null = null;
+
+      if (country.capital) {
+        const capitalLocation = await fetchCapitalCoordinates(
+          country.capital,
+          country.name,
+        );
+
+        if (capitalLocation) {
+          coordinates = {
+            latitude: capitalLocation.latitude,
+            longitude: capitalLocation.longitude,
+          };
+        }
+      }
+
+      if (!coordinates && country.latlng?.length === 2) {
+        const [latitude, longitude] = country.latlng;
+
+        coordinates = { latitude, longitude };
+      }
+
+      if (!coordinates) {
+        throw new Error("Koordinater saknas");
+      }
+
+      return fetchWeather(coordinates.latitude, coordinates.longitude);
+    },
+  });
+
+  const {
+    data: wikipedia,
+    isPending: isWikipediaPending,
+    isError: isWikipediaError,
+    refetch: refetchWikipedia,
+  } = useQuery({
+    queryKey: ["wikipedia", country?.alpha3Code],
+    enabled: Boolean(country),
+    queryFn: async () => {
+      if (!country) {
+        throw new Error("Landet hittades inte");
+      }
+
+      return fetchWikipediaSummary(country.name);
+    },
+  });
 
   const backUrl = location.state?.from ?? "/";
 
@@ -67,7 +133,7 @@ function CountryDetails() {
           ← Tillbaka
         </Link>
 
-        <section className="space-y-6 rounded-xl border bg-card p-4 text-card-foreground sm:p-6">
+        <section className="space-y-6 rounded-2xl border bg-card p-4 text-card-foreground sm:p-6">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
             <img
               src={country.flags.svg}
@@ -123,6 +189,114 @@ function CountryDetails() {
               </p>
             </div>
           </div>
+          <section className="space-y-3  bg-card p-4 text-card-foreground sm:p-6">
+            <h2 className="text-xl font-semibold">Väder i huvudstaden</h2>
+
+            {isWeatherPending && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Spinner />
+                <span>Hämtar väder...</span>
+              </div>
+            )}
+
+            {isWeatherError && (
+              <div className="space-y-3">
+                <p role="alert">Det gick inte att hämta vädret.</p>
+
+                <button
+                  type="button"
+                  onClick={() => refetchWeather()}
+                  className="rounded-md border px-4 py-2 hover:bg-muted"
+                >
+                  Försök igen
+                </button>
+              </div>
+            )}
+
+            {weather && (
+              <div className="space-y-2">
+                <p>
+                  <span className="font-semibold">Väder:</span>{" "}
+                  {getWeatherDescription(weather.current.weather_code)}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Temperatur:</span>{" "}
+                  {weather.current.temperature_2m} °C
+                </p>
+
+                <p>
+                  <span className="font-semibold">Vind:</span>{" "}
+                  {weather.current.wind_speed_10m} km/h
+                </p>
+              </div>
+            )}
+          </section>
+          <section className="space-y-4 rounded-2xl border bg-card p-4 text-card-foreground sm:p-6">
+            <h2 className="text-xl font-semibold">Om {country.name}</h2>
+
+            {isWikipediaPending && (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Spinner />
+                <span>Hämtar information från Wikipedia...</span>
+              </div>
+            )}
+
+            {isWikipediaError && (
+              <div className="space-y-3">
+                <p role="alert">
+                  Det gick inte att hämta information från Wikipedia.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => refetchWikipedia()}
+                  className="rounded-md border px-4 py-2 hover:bg-muted"
+                >
+                  Försök igen
+                </button>
+              </div>
+            )}
+
+            {wikipedia && (
+              <div className="space-y-4">
+                {wikipedia.thumbnail && (
+                  <img
+                    src={wikipedia.thumbnail.source}
+                    alt={`Bild som illustrerar ${country.name}`}
+                    className="h-auto max-h-80 w-full rounded-xl object-cover"
+                  />
+                )}
+
+                {wikipedia.extract && (
+                  <p className="leading-7 text-muted-foreground">
+                    {wikipedia.extract}
+                  </p>
+                )}
+
+                <p className="text-sm text-muted-foreground">
+                  Källa:{" "}
+                  <a
+                    href={wikipedia.content_urls.desktop.page}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-4 hover:text-foreground"
+                  >
+                    Wikipedia – {wikipedia.title}
+                  </a>
+                </p>
+
+                <a
+                  href={wikipedia.content_urls.desktop.page}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex rounded-md border px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+                >
+                  Läs hela artikeln
+                </a>
+              </div>
+            )}
+          </section>
         </section>
       </div>
     </main>
