@@ -4,8 +4,23 @@ import { ArrowUpDown } from "lucide-react";
 
 import type { DataTableFeatures } from "./data-table-features";
 import { Button } from "../button";
+import { Link, useLocation } from "react-router";
 
 const columnHelper = createColumnHelper<DataTableFeatures, Country>();
+
+function CountryNameLink({ country }: { country: Country }) {
+  const location = useLocation();
+
+  return (
+    <Link
+      to={`/country/${country.alpha3Code}`}
+      state={{ from: `${location.pathname}${location.search}` }}
+      className="font-medium underline-offset-4 hover:underline"
+    >
+      {country.name}
+    </Link>
+  );
+}
 
 export const columns = columnHelper.columns([
   columnHelper.accessor((row) => row.flags.svg, {
@@ -35,7 +50,7 @@ export const columns = columnHelper.columns([
     ),
     cell: (info) => (
       <span className="block whitespace-normal wrap-break-word">
-        {info.getValue()}
+        <CountryNameLink country={info.row.original} />
       </span>
     ),
   }),
