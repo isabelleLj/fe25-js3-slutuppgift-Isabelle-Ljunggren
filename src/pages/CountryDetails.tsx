@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
 import { getWeatherDescription } from "@/utils/weatherDescription";
-import { fetchWikipediaSummary } from "@/services/wikipedia";
 import useWeather from "@/hooks/useWeather";
 import useWikipedia from "@/hooks/useWikipedia";
 
