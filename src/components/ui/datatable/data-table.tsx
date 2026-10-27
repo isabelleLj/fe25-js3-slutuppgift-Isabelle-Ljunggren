@@ -29,10 +29,41 @@ export function DataTable<TData extends RowData>({
   columns,
   data,
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageParam = Number(searchParams.get("page") ?? "1");
+
+  const sortParam = searchParams.get("sort");
+  const orderParam = searchParams.get("order");
+  const sorting: SortingState =
+    (sortParam === "name" ||
+      sortParam === "population" ||
+      sortParam === "area") &&
+    (orderParam === "asc" || orderParam === "desc")
+      ? [{ id: sortParam, desc: orderParam === "desc" }]
+      : [];
+
+  const handleSortingChange = (
+    updater: SortingState | ((old: SortingState) => SortingState),
+  ) => {
+    const nextSorting =
+      typeof updater === "function" ? updater(sorting) : updater;
+
+    const params = new URLSearchParams(searchParams);
+
+    if (nextSorting.length === 0) {
+      params.delete("sort");
+      params.delete("order");
+    } else {
+      params.set("sort", nextSorting[0].id);
+      params.set("order", nextSorting[0].desc ? "desc" : "asc");
+    }
+
+    params.delete("page");
+
+    setSearchParams(params);
+  };
+
   const pageIndex =
     Number.isInteger(pageParam) && pageParam > 0 ? pageParam - 1 : 0;
 
@@ -57,7 +88,7 @@ export function DataTable<TData extends RowData>({
     features,
     data,
     columns,
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
     state: {
       sorting,
       pagination: {

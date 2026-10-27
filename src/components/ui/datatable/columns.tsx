@@ -72,4 +72,33 @@ export const columns = columnHelper.columns([
       </span>
     ),
   }),
+
+  columnHelper.accessor("population", {
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Befolkning
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: (info) => info.getValue().toLocaleString("sv-SE"),
+  }),
+
+  columnHelper.accessor("area", {
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Yta (km²)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: (info) =>
+      info.getValue()?.toLocaleString("sv-SE") ?? "Uppgift saknas",
+  }),
 ]);
