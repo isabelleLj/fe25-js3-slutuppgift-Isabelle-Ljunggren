@@ -2,10 +2,12 @@ import { Route, Routes } from "react-router";
 import Home from "./pages/Home";
 import CountryDetails from "@/pages/CountryDetails";
 import NotFound from "./pages/NotFound";
+import { Navbar } from "./components/ui/navbar/Navbar";
 
 function App() {
   return (
     <>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/country/:code" element={<CountryDetails />} />
