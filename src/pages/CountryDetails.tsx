@@ -1,36 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useParams } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
 import { getWeatherDescription } from "@/utils/weatherDescription";
 import useWeather from "@/hooks/useWeather";
 import useWikipedia from "@/hooks/useWikipedia";
-
-async function fetchCountries(): Promise<Country[]> {
-  const response = await fetch(
-    "https://countries.dev/countries?fields=name,nativeName,alpha3Code,region,subregion,capital,flags,population,area,latlng,languages,currencies",
-  );
-
-  if (!response.ok) {
-    throw new Error("Gick inte att hämta länderna");
-  }
-
-  return response.json();
-}
+import useCountryByCode from "@/hooks/useCountryByCode";
 
 function CountryDetails() {
   const { code } = useParams();
   const location = useLocation();
 
-  const {
-    data: countries,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["Countries"],
-    queryFn: fetchCountries,
-  });
+  const { data: country, isPending, isError, error } = useCountryByCode(code);
 
-  const country = countries?.find((country) => country.alpha3Code === code);
   const {
     data: weather,
     isPending: isWeatherPending,
@@ -59,7 +39,16 @@ function CountryDetails() {
   if (isError || !country) {
     return (
       <main className="min-h-screen w-full min-w-0 overflow-x-clip bg-slate-950 px-3 py-6 text-white sm:px-6 sm:py-8 lg:px-8">
-        <h1 className="text-2xl font-bold">Landet hittades inte</h1>
+        <h1 className="text-2xl font-bold">Kunde inte hämta landet</h1>
+
+        {isError && (
+          <p role="alert" className="mt-2 text-red-400">
+            {error instanceof Error
+              ? error.message
+              : "Ett oväntat fel inträffade."}
+          </p>
+        )}
+
         <Link to={backUrl} className="mt-4 inline-block underline">
           Tillbaka till listan
         </Link>
