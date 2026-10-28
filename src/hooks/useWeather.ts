@@ -1,53 +1,22 @@
-import { fetchCapitalCoordinates, fetchWeather } from "@/services/weather";
+import { fetchWeather } from "@/services/weather";
 import { useQuery } from "@tanstack/react-query";
 
-
-
-
 const useWeather = (country: Country | undefined) => {
-const data = useQuery({
+  return useQuery({
     queryKey: ["weather", country?.alpha3Code],
-    enabled: Boolean(country),
+    enabled: Boolean(country?.latlng?.length === 2),
     retry: 3,
+    staleTime: 1000 * 60 * 2,
     queryFn: async () => {
-      if (!country) {
-        throw new Error("Landet hittades inte");
+      if (!country?.latlng || country.latlng.length !== 2) {
+        throw new Error("Huvudstadens koordinater saknas");
       }
 
-      let coordinates: {
-        latitude: number;
-        longitude: number;
-      } | null = null;
+      const [latitude, longitude] = country.latlng;
 
-      if (country.capital) {
-        const capitalLocation = await fetchCapitalCoordinates(
-          country.capital,
-          country.name,
-        );
-
-        if (capitalLocation) {
-          coordinates = {
-            latitude: capitalLocation.latitude,
-            longitude: capitalLocation.longitude,
-          };
-        }
-      }
-
-      if (!coordinates && country.latlng?.length === 2) {
-        const [latitude, longitude] = country.latlng;
-
-        coordinates = { latitude, longitude };
-      }
-
-      if (!coordinates) {
-        throw new Error("Koordinater saknas");
-      }
-
-      return fetchWeather(coordinates.latitude, coordinates.longitude);
+      return fetchWeather(latitude, longitude);
     },
   });
+};
 
-  return data;
-
-}
-export default useWeather; 
+export default useWeather;
