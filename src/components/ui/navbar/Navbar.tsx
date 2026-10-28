@@ -27,7 +27,7 @@ export function Navbar() {
             to="/countries"
             className="text-sm font-medium text-slate-300 transition-colors hover:text-white"
           >
-            Länder
+            😝
           </Link>
         </div>
       </div>
