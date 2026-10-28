@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "@/components/ui/spinner";
 import { DataTable } from "@/components/ui/datatable/data-table";
 import { columns } from "@/components/ui/datatable/columns";
@@ -11,18 +10,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/inputBar/input-group";
 import { Button } from "@base-ui/react/button";
-
-async function fetchCountries(): Promise<Country[]> {
-  const response = await fetch(
-    "https://countries.dev/countries?fields=name,alpha3Code,region,capital,flags,population,area",
-  );
-
-  if (!response.ok) {
-    throw new Error("Gick inte att hämta länderna");
-  }
-
-  return response.json();
-}
+import useCountries from "@/hooks/useCountries";
 
 const regions = [
   "All",
@@ -38,14 +26,7 @@ function Countries() {
   const search = searchParams.get("query") ?? "";
   const selectedRegion = searchParams.get("region") ?? "All";
 
-  const {
-    data: countries,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: ["Countries"],
-    queryFn: fetchCountries,
-  });
+  const { data: countries, isPending, isError, error } = useCountries();
 
   const filteredCountries = (countries ?? []).filter((country) => {
     const matchesSearch = country.name
@@ -68,9 +49,18 @@ function Countries() {
   }
 
   if (isError) {
-    return <p>Något gick fel.</p>;
-  }
+    return (
+      <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4">
+        <p className="font-semibold text-red-400">Kunde inte hämta länderna</p>
 
+        <p className="mt-2 text-sm text-red-300" role="alert">
+          {error instanceof Error
+            ? error.message
+            : "Ett oväntat fel inträffade."}
+        </p>
+      </div>
+    );
+  }
   return (
     <section className="w-full min-w-0 space-y-4">
       <div className="w-full max-w-sm">
