@@ -11,4 +11,4 @@ Länk till deployment: https://trevlig-resa.vercel.app/
 
 AI-Redovisning: Jag har använt ChatGBT som stöd vid felhantering och förklaring av kod.
 
-Reflektion: Jag tyckte att det gick bra med min api hantering. Att få till functionen och hitta rätt fält till hemsidan. Svårast var min URLsynkronisering. Den tog lång tid innan jag fick till den ordentligt. Med min nya kunskap så hade jag kanske börjat med mina egna hooks direkt från början. Mindre och fler commits hade jag också gjort annorlunda.
+Reflektion: Jag tyckte att det gick bra med min  hantering. Att få till functionen och hitta rätt fält till hemsidan. Svårast var min URLsynkronisering. Den tog lång tid innan jag fick till den ordentligt. Med min nya kunskap så hade jag kanske börjat med mina egna hooks direkt från början. Mindre och fler commits hade jag också gjort annorlunda. Även att få hela landets list rad klickbar och inte bara landets namn.
