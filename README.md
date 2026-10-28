@@ -1,35 +1,14 @@
-# React + TypeScript + Vite
+Vad gör appen: Hämtar en lista av länder. Varje land har i sin tur en detaljsida med information om varje lands Region, Underregion, Huvudstad, Befolkning, Språk och Valuta. Vädret för varje land finns med och även en kort information hämtad från wikipedia.
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Hur kör man den lokalt?: npm run dev
 
-Currently, two official plugins are available:
+Vilket ramverk: React, vite. För att det är den som jag känner mig mest säker i och jag vill bli bättre i det då det används av många.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Vad har jag gjort för VG fördjupningar?
+Jag valde att födjupa mig inom cache hanteringen samt att kunna sortera i listan.
 
-## React Compiler
+Länk till deployment:
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+AI-Redovisning: Jag har använt ChatGBT som stöd vid felhantering och förklaring av kod.
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Reflektion: Jag tyckte att det gick bra med min api hantering. Att få till functionen och hitta rätt fält till hemsidan. Svårast var min URLsynkronisering. Den tog lång tid innan jag fick till den ordentligt. Med min nya kunskap så hade jag kanske börjat med mina egna hooks direkt från början. Mindre och fler commits hade jag också gjort annorlunda.
