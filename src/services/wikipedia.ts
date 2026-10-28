@@ -5,7 +5,7 @@ async function fetchWikipediaSummary(
   const title = encodeURIComponent(countryName);
 
   const response = await fetch(
-    `https://en.wikipedia.org/api/rest_v1/page/summary/${title}`,
+    `https://sv.wikipedia.org/api/rest_v1/page/summary/${title}`,
   );
 
   if (!response.ok) {
