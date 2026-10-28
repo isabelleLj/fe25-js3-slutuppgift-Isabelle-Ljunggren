@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useSearchParams } from "react-router";
 
 import {
