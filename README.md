@@ -7,7 +7,7 @@ Vilket ramverk: React, vite. För att det är den som jag känner mig mest säke
 Vad har jag gjort för VG fördjupningar?
 Jag valde att födjupa mig inom cache hanteringen samt att kunna sortera i listan.
 
-Länk till deployment:
+Länk till deployment: https://trevlig-resa.vercel.app/
 
 AI-Redovisning: Jag har använt ChatGBT som stöd vid felhantering och förklaring av kod.
 
