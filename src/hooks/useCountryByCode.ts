@@ -6,6 +6,8 @@ const useCountryByCode = (code:string | undefined)=> {
     queryKey: ["Country", code],
     queryFn: () => fetchCountryByCode(code!),
     enabled: !!code,
+    staleTime: 1000 * 60 * 30,
+    gcTime: 1000 * 60 * 60,
   });
 
   return data;
